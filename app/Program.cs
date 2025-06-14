@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using app.Context;
 namespace app
 {
     public class Program
@@ -5,6 +7,12 @@ namespace app
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<DataBaseContext>(
+                options => options.UseSqlServer(
+                    builder.Configuration["ConnectionString:BurgerAppDB"]
+                 )
+            );
 
 
             // Add services to the container.
