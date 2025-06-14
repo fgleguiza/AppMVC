@@ -1,0 +1,67 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.resharper
+*.vspscc
+*.vssscc
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.dll
+*.exe
+*.lib
+*.exp
+*.com
+*.ilk
+*.log
+*.tlb
+*.tlh
+*.tmp
+*.vshost.*
+*.vsidx
+*.opensdf
+
+# Resharper
+_ReSharper.*/
+*.DotSettings
+*.DotSettings.user
+
+# NuGet
+packages/
+*.nupkg
+# The packages folder can be deleted once NuGet is restored, so it is OK to commit it (unless there are a lot of local packages).
+# If your source control provider isn't allowing you to check in the packages folder, uncomment the line below.
+# packages/
+
+# Rider
+.idea/
+
+# Other common files
+*.bak
+*.scc
+*.vc.db
+*.aps
+*.bsc
+*.mfclib
+*.pgc
+*.pgd
+*.pch
+*.idb
+*.ipch
+*.iobj
+*.obj
+*.PCH
+*.ipch
+*.sdf
+*.cache
+
+# Local files
+*.local
+*.user
+*.pidb
+*.sqlite
