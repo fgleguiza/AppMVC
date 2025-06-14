@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Iniciar Sesión";
+    // Si usas un _Layout, déjalo, si es una página completamente independiente, puedes usar Layout = null;
+}
+
+<h1>Iniciar Sesión</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Login" asp-controller="Auth" method="post">
+            @* Este div mostrará los errores de ModelState.AddModelError("", "Credenciales inválidas."); *@
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label for="username" class="control-label">Usuario:</label>
+                <input type="text" id="username" name="username" class="form-control" />
+                @* No necesitas <span asp-validation-for="username" ... /> aquí si no usas Data Annotations en un ViewModel *@
+            </div>
+            <div class="form-group">
+                <label for="password" class="control-label">Contraseña:</label>
+                <input type="password" id="password" name="password" class="form-control" />
+                @* Igual que arriba, no span asp-validation-for aquí. *@
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Iniciar sesión" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
