@@ -35,9 +35,15 @@ namespace app
 
             app.UseAuthorization();
 
+
             app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                name: "login",
+                pattern: "login",
+                defaults: new { controller = "Home", action = "Login" });
+
+            app.MapControllerRoute(
+                name: "login",
+                pattern: "{controller=Home}/{action=Login}");
 
             app.Run();
 
