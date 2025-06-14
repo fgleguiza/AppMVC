@@ -33,19 +33,31 @@ namespace app
 
             app.UseRouting();
 
+     
+
             app.UseAuthorization();
 
-
+            // Tus rutas personalizadas (la más específica primero)
             app.MapControllerRoute(
                 name: "login",
-                pattern: "login",
-                defaults: new { controller = "Home", action = "Login" });
+                pattern: "/",
+                defaults: new { controller = "Auth", action = "TemplateLogin" });
 
             app.MapControllerRoute(
-                name: "login",
-                pattern: "{controller=Home}/{action=Login}");
+                name: "home",
+                pattern: "home",
+                defaults: new { controller = "Home", action = "Index" });
 
-            app.Run();
+            // La ruta genérica "default" SIEMPRE debe ir al final
+            // de todas tus rutas específicas, porque es un "catch-all".
+            // Si la pones antes, podría coincidir antes que tus rutas específicas.
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Auth}/{action=TemplateLogin}/{id?}"); // Valores por defecto para si no se especifica nada.
+
+            app.Run(); // <-- ¡Aquí va la ÚNICA llamada a Run()!
+
+            // No debe haber más código aquí, ya que app.Run() es un método bloqueante.
 
         }
     }
