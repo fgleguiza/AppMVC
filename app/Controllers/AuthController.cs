@@ -1,5 +1,6 @@
 ﻿using app.Context;
 using app.Models;
+using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Diagnostics;
@@ -11,11 +12,14 @@ namespace app.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly DataBaseContext _context;
 
-     
+
+
+
         public AuthController(ILogger<AuthController> logger, DataBaseContext context)
         {
             _logger = logger;
             _context = context;
+
         }
 
         [HttpGet]
@@ -28,6 +32,7 @@ namespace app.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([Bind("Id,NombreCompleto,Email,Contrasena,Telefono,FechaNacimiento")] Usuario usuario)
         {
+            _logger.LogInformation("Intento de registro Registro.");
             if (ModelState.IsValid)
             {
                 _context.Add(usuario);
@@ -38,11 +43,17 @@ namespace app.Controllers
             return View(usuario);
         }
 
+        private IActionResult ViewWithLayout(string viewName, object model = null)
+        {
+            ViewBag.Layout = "_AuthLayout";
+            return View(viewName, model);
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
             _logger.LogInformation("Mostrando formulario de login.");
-            return View();
+            return ViewWithLayout("Login");
         }
 
 
