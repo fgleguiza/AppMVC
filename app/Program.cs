@@ -40,8 +40,13 @@ namespace app
             // Tus rutas personalizadas (la más específica primero)
             app.MapControllerRoute(
                 name: "login",
-                pattern: "/",
-                defaults: new { controller = "Auth", action = "TemplateLogin" });
+                pattern: "Login",
+                defaults: new { controller = "Auth", action = "Login" });
+
+            app.MapControllerRoute(
+                name: "register",
+                pattern: "Register",
+                defaults: new { controller = "Auth", action = "Register" });
 
             app.MapControllerRoute(
                 name: "home",
@@ -53,11 +58,9 @@ namespace app
             // Si la pones antes, podría coincidir antes que tus rutas específicas.
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Auth}/{action=TemplateLogin}/{id?}"); // Valores por defecto para si no se especifica nada.
+                pattern: "{controller=Auth}/{action=Login}/{id?}"); // Valores por defecto para si no se especifica nada.
 
-            app.Run(); // <-- ¡Aquí va la ÚNICA llamada a Run()!
-
-            // No debe haber más código aquí, ya que app.Run() es un método bloqueante.
+            app.Run(); 
 
         }
     }
