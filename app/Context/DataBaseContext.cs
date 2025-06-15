@@ -11,6 +11,23 @@ namespace app.Context
         }
 
         public DbSet<Usuario> Usuario { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Insertamos un usuario administrador
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario
+                {
+                    Id = 1,
+                    NombreCompleto = "Facuno Gerardo Leguiza",
+                    Email = "fgleguiza2001@gmail.com",
+                    Contrasena = "123456",
+                    Telefono = "113834103",
+                    FechaNacimiento = new DateTime(2001, 8, 6)
+                }
+            );
+        }
     }
     
 }

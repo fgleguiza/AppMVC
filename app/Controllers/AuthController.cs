@@ -1,20 +1,45 @@
-﻿using System.Diagnostics;
+﻿using app.Context;
 using app.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Diagnostics;
 
 namespace app.Controllers
 {
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> _logger;
+        private readonly DataBaseContext _context;
 
-        public AuthController(ILogger<AuthController> logger)
+     
+        public AuthController(ILogger<AuthController> logger, DataBaseContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            _logger.LogInformation("Mostrando formulario de Registro.");
+            return View();
+        }
 
-        public IActionResult TemplateLogin()
+        [HttpPost]
+        public async Task<IActionResult> Register([Bind("Id,NombreCompleto,Email,Contrasena,Telefono,FechaNacimiento")] Usuario usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(usuario);
+                await _context.SaveChangesAsync();
+                TempData["MensajeExito"] = "Registro exitoso";
+                return View("Register");
+            }
+            return View(usuario);
+        }
+
+        [HttpGet]
+        public IActionResult Login()
         {
             _logger.LogInformation("Mostrando formulario de login.");
             return View();
@@ -22,20 +47,20 @@ namespace app.Controllers
 
 
         [HttpPost]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login(string email, string password)
         {
-            _logger.LogInformation("Intento de login para el usuario: {Username}", username);
+            _logger.LogInformation("Intento de login para el usuario : {email}", email);
 
-            if (!(username == "admin@admin.com" && password == "1234"))
+            var tablaUsuario = _context.Usuario;
+            var usuarioBuscado = tablaUsuario.FirstOrDefault(u => u.Email == email && u.Contrasena == password);
+
+            if (usuarioBuscado == null)
             {
-                _logger.LogWarning("Login fallido para el usuario: {Username}. Credenciales incorrectas.", username);
-
-                ModelState.AddModelError(string.Empty, "Credenciales inválidas.");
-
-                return View("TemplateLogin");
+                _logger.LogWarning("Login fallido  Credenciales incorrectas. {email}", email);
+                ModelState.AddModelError(string.Empty, "Credenciales incorrectas");
+                return View("Login");
             }
 
-            _logger.LogInformation("Login exitoso para el usuario: {Username}", username);
             return RedirectToAction("Index", "Home");
         }
     }
