@@ -4,9 +4,9 @@
     ViewData["Title"] = "Iniciar Sesión";
 }
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div class="container d-flex justify-content-center align-items-center " style="min-height: 80vh;">
     <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg rounded">
+        <div class="card shadow-sm rounded">
             <div class="card-body p-4">
                 <h2 class="text-center mb-4">Iniciar Sesión</h2>
 
@@ -28,8 +28,8 @@
 
 
                     <div class="form-group mb-4">
-                        <label asp-for="Contrasena" class="form-label"></label>
-                        <input asp-for="Contrasena" type="password" class="form-control" placeholder="••••••••" required />
+                        <label asp-for="Contrasena" class="form-label">Contraseña</label>
+                        <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña" required />
                         <span asp-validation-for="Contrasena" class="text-danger"></span>
                     </div>
 

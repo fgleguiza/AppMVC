@@ -15,6 +15,11 @@ namespace app.Controllers
 
         public IActionResult Index()
         {
+            var nombre = HttpContext.Session.GetString("nombreCompleto");
+            ViewBag.Nombre = nombre;
+
+            _logger.LogInformation("Mostrando la vista de inicio para el usuario: {Nombre}", nombre);
+
             return View();
         }
 

@@ -25,6 +25,12 @@ namespace app.Controllers
             return View(viewName, model);
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -102,6 +108,10 @@ namespace app.Controllers
                 return ViewAuth("Login", usuario);
             }
 
+            // 🔐 Guardar en sesión
+            HttpContext.Session.SetInt32("id", usuarioBuscado.Id);
+            HttpContext.Session.SetString("nombreCompleto", usuarioBuscado.NombreCompleto);
+            HttpContext.Session.SetString("email", usuarioBuscado.Email);
             return RedirectToAction("Index", "Home");
         }
     }
