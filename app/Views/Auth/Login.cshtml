@@ -1,42 +1,78 @@
-﻿@{
+﻿@model app.Models.Usuario
+
+@{
     ViewData["Title"] = "Iniciar Sesión";
-    // Si usas un _Layout, déjalo, si es una página completamente independiente, puedes usar Layout = null;
 }
 
-<h1>Iniciar Sesión</h1>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg rounded">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Iniciar Sesión</h2>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login" asp-controller="Auth" method="post">
-            @* Este div mostrará los errores de ModelState.AddModelError("", "Credenciales inválidas."); *@
-            <div asp-validation-summary="All" class="text-danger"></div>
+                @if (TempData["CuentaExistente"] != null)
+                {
+                    <div class="alert alert-warning">
+                        @TempData["CuentaExistente"]
+                    </div>
+                }
 
-            <div class="form-group">
-                <label for="email" class="control-label">Email:</label>
-                <input type="text" id="email" name="email" class="form-control" />
-                @* No necesitas <span asp-validation-for="username" ... /> aquí si no usas Data Annotations en un ViewModel *@
+                <form asp-action="Login" asp-controller="Auth" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="Email" class="form-control" placeholder="ejemplo@correo.com" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Contrasena" class="form-label"></label>
+                        <input asp-for="Contrasena" type="password" class="form-control" placeholder="••••••••" required />
+                        <span asp-validation-for="Contrasena" class="text-danger"></span>
+                    </div>
+
+                 
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="register" class="btn btn-outline-secondary">¿No tienes cuenta? Registrarse</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="password" class="control-label">Contraseña:</label>
-                <input type="password" id="password" name="password" class="form-control" />
-                @* Igual que arriba, no span asp-validation-for aquí. *@
-            </div>
-            <br />
-            <div class="form-group">
-                <input type="submit" value="Iniciar sesión" class="btn btn-primary" />
-            </div>
-
-         
-            <div class="form-group">
-                <a class="btn btn-primary" href="register">Registrarse</a>
-            </div>
+        </div>
+    </div>
+</div>
 
 
-        </form>
+<!-- Toast container -->
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080">
+    <div id="toastRegistro" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                @TempData["MensajeExito"]
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var mensaje = "@TempData["MensajeExito"]";
+            if (mensaje) {
+                var toastEl = document.getElementById("toastRegistro");
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
