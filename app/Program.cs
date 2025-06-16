@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using app.Context;
+using app.Middlewares;
 namespace app
 {
     public class Program
@@ -8,6 +9,7 @@ namespace app
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //conexion db global
             builder.Services.AddDbContext<DataBaseContext>(
                 options => options.UseSqlServer(
                     builder.Configuration["ConnectionString:BurgerAppDB"]
@@ -15,12 +17,12 @@ namespace app
             );
 
 
-            // Add services to the container.
+            //configuaracion
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -28,37 +30,43 @@ namespace app
                 app.UseHsts();
             }
 
+            app.UseSession();
+            app.UseMiddleware<AutenticacionMiddleware>();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
-     
-
             app.UseAuthorization();
 
-            // Tus rutas personalizadas (la más específica primero)
+
+
+
+            //rutas de Auth
             app.MapControllerRoute(
                 name: "login",
-                pattern: "Login",
+                pattern: "login",
                 defaults: new { controller = "Auth", action = "Login" });
 
             app.MapControllerRoute(
                 name: "register",
-                pattern: "Register",
+                pattern: "register",
                 defaults: new { controller = "Auth", action = "Register" });
 
+            app.MapControllerRoute(
+                name: "logout",
+                pattern: "salir",
+                defaults: new { controller = "Auth", action = "Logout" });
+
+
+            //rutas de home
             app.MapControllerRoute(
                 name: "home",
                 pattern: "home",
                 defaults: new { controller = "Home", action = "Index" });
 
-            // La ruta genérica "default" SIEMPRE debe ir al final
-            // de todas tus rutas específicas, porque es un "catch-all".
-            // Si la pones antes, podría coincidir antes que tus rutas específicas.
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Auth}/{action=Login}/{id?}"); // Valores por defecto para si no se especifica nada.
+
+            // ruta default
+            app.MapDefaultControllerRoute();
 
             app.Run(); 
 
