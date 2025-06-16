@@ -1,5 +1,6 @@
 ﻿using app.Context;
 using app.Models;
+using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Diagnostics;
@@ -11,54 +12,94 @@ namespace app.Controllers
         private readonly ILogger<AuthController> _logger;
         private readonly DataBaseContext _context;
 
-     
         public AuthController(ILogger<AuthController> logger, DataBaseContext context)
         {
             _logger = logger;
             _context = context;
+
+        }
+
+        private IActionResult ViewAuth(string viewName, object model = null)
+        {
+            ViewBag.Layout = "_AuthLayout";
+            return View(viewName, model);
         }
 
         [HttpGet]
         public IActionResult Register()
         {
             _logger.LogInformation("Mostrando formulario de Registro.");
-            return View();
+            return ViewAuth("Register");
+        }
+
+
+        private bool EmailYaRegistrado(string email)
+        {
+            return _context.Usuario.Any(u => u.Email == email);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([Bind("Id,NombreCompleto,Email,Contrasena,Telefono,FechaNacimiento")] Usuario usuario)
+        public async Task<IActionResult> Register(
+            [Bind(
+                "Id," +
+                "NombreCompleto," +
+                "Email," +
+                "Contrasena," +
+                "Telefono," +
+                "FechaNacimiento"
+            )] Usuario usuario)
         {
-            if (ModelState.IsValid)
+            _logger.LogInformation("Intento de registro Registro.");
+
+            if (EmailYaRegistrado(usuario.Email))
+            {
+                TempData["CuentaExistente"] = "Ese correo ya está registrado";
+                return View(usuario);
+            }
+
+            var validarDatosEntrantes = ModelState.IsValid;
+
+            if (validarDatosEntrantes)
             {
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Registro exitoso {usuario}", usuario);
                 TempData["MensajeExito"] = "Registro exitoso";
-                return View("Register");
+                return ViewAuth("Login");
             }
-            return View(usuario);
+            _logger.LogInformation("No se logro validar los datos.");
+            return ViewAuth("Register", usuario);
         }
 
+       
         [HttpGet]
         public IActionResult Login()
         {
             _logger.LogInformation("Mostrando formulario de login.");
-            return View();
+            return ViewAuth("Login");
         }
 
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(Usuario usuario)
         {
-            _logger.LogInformation("Intento de login para el usuario : {email}", email);
+            _logger.LogInformation("Intento de login para el usuario : {Email}", usuario.Email);
 
-            var tablaUsuario = _context.Usuario;
-            var usuarioBuscado = tablaUsuario.FirstOrDefault(u => u.Email == email && u.Contrasena == password);
+
+            if (!EmailYaRegistrado(usuario.Email))
+            {
+                TempData["CuentaExistente"] = "Usuaro inexitente";
+                return ViewAuth("Login", usuario);
+            }
+            var usuarioBuscado = _context.Usuario.FirstOrDefault(
+                u => u.Email == usuario.Email && u.Contrasena == usuario.Contrasena
+             );
+
 
             if (usuarioBuscado == null)
             {
-                _logger.LogWarning("Login fallido  Credenciales incorrectas. {email}", email);
-                ModelState.AddModelError(string.Empty, "Credenciales incorrectas");
-                return View("Login");
+                TempData["CuentaExistente"] = "Contrasenia Incorrecta!";
+                return ViewAuth("Login", usuario);
             }
 
             return RedirectToAction("Index", "Home");
