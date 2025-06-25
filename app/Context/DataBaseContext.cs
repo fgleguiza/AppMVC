@@ -11,11 +11,13 @@ namespace app.Context
         }
 
         public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<EmailCode> EmailCodes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Insertamos un usuario administrador
+            // Insertamos un usuario admi nistrador
             modelBuilder.Entity<Usuario>().HasData(
                 new Usuario
                 {
