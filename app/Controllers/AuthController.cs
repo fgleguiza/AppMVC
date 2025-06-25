@@ -1,29 +1,134 @@
 ﻿using app.Context;
 using app.Models;
+using app.Service;
+using app.ViewModels;
 using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Diagnostics;
 
+
+
 namespace app.Controllers
 {
     public class AuthController : Controller
     {
+
         private readonly ILogger<AuthController> _logger;
         private readonly DataBaseContext _context;
+        private readonly EmailService _emailService;
 
-        public AuthController(ILogger<AuthController> logger, DataBaseContext context)
+        public AuthController(ILogger<AuthController> logger, DataBaseContext context , EmailService emailService)
         {
             _logger = logger;
             _context = context;
+            _emailService = emailService;
 
         }
 
+       
         private IActionResult ViewAuth(string viewName, object model = null)
         {
             ViewBag.Layout = "_AuthLayout";
             return View(viewName, model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> sendEmail()
+        {
+            await _emailService.SendEmailAsync(
+                "aldanabp@outlook.com",
+                "Hola soy la aplicacion de facu que esta haciendo para la facu jeje , el dice que te ama mucho , que no lo olvides nunca!!",
+                "<h1>¡Correo enviado correctamente!</h1>"
+            );
+
+            return Content("OK");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            _logger.LogInformation("Formulario de recuperacion contrasenia.");
+            return ViewAuth("ForgotPassword");
+        }
+
+        //[HttpGet]
+        //public async Task<IActionResult> SendVerificationCode(UsuarioEmailCode usuario)
+        //{
+       
+        //    if (!ModelState.IsValid)
+        //        return ViewAuth("SendVerificationCode", usuario);
+
+        //    var usuarioBuscado = _context.Usuario.FirstOrDefault(
+        //       u => u.Email == usuario.Email
+        //    );
+
+
+
+        //    var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == model.Email);
+        //    if (usuario == null)
+        //    {
+        //        ModelState.AddModelError("Email", "El correo no está registrado.");
+        //        return View(model);
+        //    }
+
+        //    var codigoValido = await _context.EmailCodes
+        //        .Where(c => c.UsuarioId == usuario.Id && c.Codigo == model.Codigo)
+        //        .OrderByDescending(c => c.Expiracion)
+        //        .FirstOrDefaultAsync();
+
+        //    if (codigoValido == null || codigoValido.Expiracion < DateTime.UtcNow)
+        //    {
+        //        ModelState.AddModelError("Codigo", "Código inválido o expirado.");
+        //        return View(model);
+        //    }
+
+        //    // Éxito → redirigir al cambio de contraseña
+        //    return RedirectToAction("CambiarContrasena", new { email = model.Email });
+
+
+
+
+
+
+        //    _logger.LogInformation("Formulario de codigo de verificacion contrasenia.");
+        //    return ViewAuth("SendVerificationCode");
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> GetVerificationCode(Usuario usuario)
+        {
+
+            if (!EmailYaRegistrado(usuario.Email))
+            {
+                TempData["CuentaExistente"] = "Usuaro inexitente";
+                return ViewAuth("ForgotPassword", usuario);
+            }
+
+
+            var usuarioBuscado = _context.Usuario.FirstOrDefault(
+               u => u.Email == usuario.Email
+            );
+
+            string codigo = new Random().Next(100000, 999999).ToString();
+
+            var nuevoCodigo = new EmailCode
+            {
+                Codigo = codigo,
+                Expiracion = DateTime.UtcNow.AddMinutes(10),
+                UsuarioId = usuarioBuscado.Id
+            };
+
+            _context.Add(nuevoCodigo);
+            await _context.SaveChangesAsync();
+
+            // Enviar por correo
+            string body = $"Tu código de verificación es: <strong>{codigo}</strong><br>Expira en 10 minutos.";
+            await _emailService.SendEmailAsync(usuarioBuscado.Email, "Código de verificación", body);
+
+            return ViewAuth("SendVerificationCode", usuario);
+        }
+
 
         public IActionResult Logout()
         {
@@ -63,6 +168,8 @@ namespace app.Controllers
                 return View(usuario);
             }
 
+
+
             var validarDatosEntrantes = ModelState.IsValid;
 
             if (validarDatosEntrantes)
@@ -84,6 +191,9 @@ namespace app.Controllers
             _logger.LogInformation("Mostrando formulario de login.");
             return ViewAuth("Login");
         }
+
+        
+
 
 
         [HttpPost]

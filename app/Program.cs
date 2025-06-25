@@ -1,6 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using app.Context;
 using app.Middlewares;
+using app.Service;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 namespace app
 {
     public class Program
@@ -8,6 +10,8 @@ namespace app
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddTransient<EmailService>();
 
             //conexion db global
             builder.Services.AddDbContext<DataBaseContext>(
@@ -57,12 +61,20 @@ namespace app
                 pattern: "salir",
                 defaults: new { controller = "Auth", action = "Logout" });
 
+            app.MapControllerRoute(
+                name: "forgotPassword",
+                pattern: "forgotPassword",
+                defaults: new { controller = "Auth", action = "ForgotPassword" });
+
 
             //rutas de home
             app.MapControllerRoute(
                 name: "home",
                 pattern: "home",
                 defaults: new { controller = "Home", action = "Index" });
+
+
+            
 
 
             // ruta default

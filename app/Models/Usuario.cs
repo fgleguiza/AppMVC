@@ -27,5 +27,9 @@ namespace app.Models
         [Required(ErrorMessage = "La fecha de nacimiento es obligatoria")]
         [DataType(DataType.Date, ErrorMessage = "La fecha de nacimiento no tiene un formato válido")]
         public DateTime FechaNacimiento { get; set; }
+
+
+
+        public ICollection<EmailCode> EmailCodes { get; set; }
     }
 }

@@ -22,10 +22,12 @@ namespace app.Middlewares
                 "/login",
                 "/register",
                 "/salir",
+                "/forgotpassword",
                 "/css",
                 "/js",
                 "/images",
-                "/favicon.ico"
+                "/favicon.ico",
+                "/auth/getverificationcode"
             };
 
             bool rutaEsPublica = rutasPermitidas.Any(p => path.StartsWith(p));
