@@ -1,0 +1,271 @@
+﻿<div class="container my-5">
+    <!-- Tarjeta de bienvenida -->
+    <div class="d-flex justify-content-center mb-4">
+        <div class="card shadow border-0" style="max-width: 500px;">
+            <div class="card-body text-center">
+                <h4 class="card-title mb-2">🎉 ¡Hola @ViewBag.Nombre!</h4>
+                <p class="card-text text-muted">¡Estás a un paso de disfrutar BurgerApp!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen del carrito -->
+
+    <div class="container my-5">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-dark text-white">
+                🛒 Resumen de tu pedido
+            </div>
+            <div class="card-body" id="resumenCarrito">
+                <!-- Se completa con JavaScript -->
+            </div>
+        </div>
+
+
+
+    <!-- Formulario de confirmación -->
+    
+        <div class="card shadow mx-auto ">
+            <div class="card-header bg-dark text-white">
+                ✅ Confirmar Pedido
+            </div>
+
+            <div class="card-body">
+                <form id="formConfirmarPedido">
+                    <input type="hidden" id="usuarioId" value="@ViewBag.UserId" />
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label fw-bold">Dirección de entrega</label>
+                        <input type="text" class="form-control" id="direccion" placeholder="Ej: Calle" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label fw-bold">Teléfono de contacto</label>
+                        <input type="text" class="form-control" id="telefono" placeholder="Ej: 11 1234-5678">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label fw-bold">Observaciones (opcional)</label>
+                        <textarea class="form-control" id="observaciones" rows="3" placeholder="Ej: Sin mayonesa, timbre roto, llamar..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Forma de pago</label>
+                        <select class="form-select" id="formaPago" required>
+                            <option value="">Seleccionar</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta (Simulado)</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Form tarjeta -->
+                    <div id="formularioTarjeta" style="display: none;">
+                        <div class="card mt-4">
+                            <div class="card-header bg-dark text-white">
+                                💳 Datos de la Tarjeta (Simulado)
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="nombreTitular" class="form-label">Nombre del titular</label>
+                                    <input type="text" class="form-control" id="nombreTitular" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="numeroTarjeta" class="form-label">Número de tarjeta</label>
+                                    <input type="text" class="form-control" id="numeroTarjeta" maxlength="16" placeholder="1234123412341234" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vencimiento" class="form-label">Vencimiento (MM/AA)</label>
+                                    <input type="text" class="form-control" id="vencimiento" maxlength="5" placeholder="MM/AA" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" maxlength="3" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <button id="btnConfirmar" type="submit" class="btn btn-success w-100">
+                            <span id="spinnerConfirmar" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                            Confirmar pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+   
+
+</div>
+
+<!-- Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+        document.getElementById("formaPago").addEventListener("change", function () {
+        const seleccion = this.value;
+        const formTarjeta = document.getElementById("formularioTarjeta");
+
+        const camposTarjeta = [
+            "nombreTitular",
+            "numeroTarjeta",
+            "vencimiento",
+            "cvv"
+        ];
+
+        if (seleccion === "Tarjeta") {
+            formTarjeta.style.display = "block";
+            // Activar required
+            camposTarjeta.forEach(id => {
+                document.getElementById(id).setAttribute("required", "required");
+            });
+        } else {
+            formTarjeta.style.display = "none";
+            // Quitar required
+            camposTarjeta.forEach(id => {
+                document.getElementById(id).removeAttribute("required");
+            });
+        }
+    });
+
+
+        
+        const resumenCarrito = document.getElementById("resumenCarrito");
+        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            console.log(carrito)
+
+
+        if (carrito.length === 0) {
+            resumenCarrito.innerHTML = "<p class='text-center text-muted'>Tu carrito está vacío.</p>";
+            document.getElementById("formConfirmarPedido").style.display = "none";
+            return;
+        }
+
+        let total = 0;
+
+        carrito.forEach(item => {
+            const cantidad = item.cantidad || 1;
+            const subtotal = item.precio * cantidad;
+            total += subtotal;
+
+            const ingredientes = (item.tipo === "hamburguesa" && item.ingredientes && item.ingredientes.length > 0)
+             ? `<br><small class="text-muted">(${item.ingredientes.join(", ")})</small>`: "";
+
+            const itemHtml = `
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <div>
+                        <strong>${item.nombre}</strong>${ingredientes}
+                    </div>
+                    <div>$${subtotal.toFixed(2)}</div>
+                </div>
+            `;
+
+            resumenCarrito.insertAdjacentHTML("beforeend", itemHtml);
+        });
+
+        resumenCarrito.insertAdjacentHTML("beforeend", `
+            <div class="d-flex justify-content-between fw-bold mt-2">
+                <div>Total:</div>
+                <div>$${total.toFixed(2)}</div>
+            </div>
+        `);
+  
+
+        // Confirmar pedido
+            document.getElementById("formConfirmarPedido").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const btn = document.getElementById("btnConfirmar");
+                const spinner = document.getElementById("spinnerConfirmar");
+                const formaPago = document.getElementById("formaPago").value;
+                const observaciones = document.getElementById("observaciones").value.trim();
+
+                if (!formaPago) {
+                    alert("Selecciona una forma de pago antes de continuar.");
+                    return;
+                }
+
+                // Validar tarjeta SOLO si está visible y la forma de pago es "Tarjeta"
+                if (formaPago === "Tarjeta") {
+                    const nombre = document.getElementById("nombreTitular").value.trim();
+                    const numero = document.getElementById("numeroTarjeta").value.trim();
+                    const vencimiento = document.getElementById("vencimiento").value.trim();
+                    const cvv = document.getElementById("cvv").value.trim();
+
+                    if (!nombre || !/^\d{16}$/.test(numero) || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimiento) || !/^\d{3}$/.test(cvv)) {
+                        alert("Completa los datos de la tarjeta correctamente.");
+                        return;
+                    }
+                }
+
+                const usuarioId = parseInt(document.getElementById("usuarioId").value);
+
+                const pedido = {
+                    usuarioId: usuarioId,
+                    formaPago: document.getElementById("formaPago").value,
+                    direccionEntrega: document.getElementById("direccion").value,
+                    telefonoContacto: document.getElementById("telefono").value,
+                    observaciones: document.getElementById("observaciones").value,
+                    items: obtenerItemsDelCarrito() // función que vos manejás
+                };
+
+                console.log("Pedido generado:", pedido);
+
+                try {
+                            btn.disabled = true;
+                            spinner.classList.remove('d-none');
+                    const response = await fetch(
+                        '/confirmar',
+                        {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(pedido)
+                        }
+                    );
+
+
+
+                    if (response.ok) {
+                                alert("✅ Pedido generado exitosamente.\nGracias por elegir BurgerApp!");
+                                localStorage.removeItem("carrito");
+                                const data = await response.json();
+                                const numeroPedido = data.numeroPedido;
+
+                               window.location.href = `/comprobante?numero=${encodeURIComponent(numeroPedido)}`;
+                        } else {
+           
+                        alert("Hubo un error al confirmar el pedido.");
+                        }
+
+                } catch (err) {
+                    console.error();
+                    alert("Error en la conexión.");
+                } finally {
+            // Restaurar botón y ocultar spinner si sigue en la misma vista
+                    btn.disabled = false;
+                    spinner.classList.add('d-none');
+            }
+
+            });
+
+        
+    });
+
+
+
+     function obtenerItemsDelCarrito() {
+        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+        return carrito.map(item => ({
+            tipoProducto: item.tipo === "hamburguesa" ? "Hamburguesa" :
+                          item.tipo === "bebida" ? "Bebida" : "Otro",
+            productoId: item.id,
+            cantidad: item.cantidad || 1,
+            precioUnitario: item.precio
+        }));
+    }
+</script>

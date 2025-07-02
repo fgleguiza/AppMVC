@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "¡Gracias por tu pedido!";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow p-4 text-center" style="max-width: 400px;">
+        <div class="mb-3">
+            <img src="https://cdn-icons-png.flaticon.com/512/992/992700.png" alt="Pedido confirmado" style="width: 80px;" />
+        </div>
+        <h2 class="mb-3 text-success">✅ ¡Gracias por tu pedido!</h2>
+        <p class="fs-5">Tu pedido ha sido registrado correctamente.</p>
+        <p>Tu número de pedido es:</p>
+        <p class="fs-4 fw-bold text-primary">@ViewBag.NumeroPedido</p>
+        <p class="text-muted">Te notificaremos por correo electrónico cuando tu pedido esté en camino.</p>
+        <a href="/" class="btn btn-success mt-3">Volver al inicio</a>
+    </div>
+</div>

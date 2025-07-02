@@ -2,7 +2,7 @@ using app.Context;
 using app.Middlewares;
 using app.Service;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+
 namespace app
 {
     public class Program
@@ -73,8 +73,51 @@ namespace app
                 pattern: "home",
                 defaults: new { controller = "Home", action = "Index" });
 
+            app.MapControllerRoute(
+               name: "Hamburguesas",
+               pattern: "Hamburguesas",
+               defaults: new { controller = "Home", action = "MenuHamburguesas" });
 
-            
+            app.MapControllerRoute(
+               name: "Bebidas",
+               pattern: "Bebidas",
+               defaults: new { controller = "Home", action = "MenuBebidas" });
+
+            app.MapControllerRoute(
+              name: "carrito",
+              pattern: "carrito",
+              defaults: new { controller = "Home", action = "Carrito" });
+
+            app.MapControllerRoute(
+             name: "hacerpedido",
+             pattern: "hacerpedido",
+             defaults: new { controller = "Home", action = "HacerPedido" });
+
+
+            app.MapControllerRoute(
+               name: "mispedidos",
+               pattern: "mispedidos",
+               defaults: new { controller = "Pedido", action = "MisPedidos" });
+
+
+            app.MapControllerRoute(
+                name: "confirmar",
+                pattern: "confirmar",
+                defaults: new { controller = "Pedido", action = "Confirmar" });
+
+
+            app.MapControllerRoute(
+                name: "comprobante",
+                pattern: "comprobante/{numero?}",
+                defaults: new { controller = "Pedido", action = "Comprobante" });
+
+
+            app.MapControllerRoute(
+                name: "mispedidos",
+                pattern: "mispedidos",
+                defaults: new { controller = "Pedido", action = "MisPedidos" });
+
+
 
 
             // ruta default

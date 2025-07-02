@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Carrito";
+}
+
+<section class="container my-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">🛒 Carrito de Compras</h2>
+        <p class="text-muted">Revisa tu pedido antes de confirmarlo</p>
+    </div>
+
+
+    <div id="carrito-container">
+        <p>Cargando productos...</p>
+    </div>
+
+    <div class="card shadow-sm p-4">
+        <div class="row align-items-center">
+            <div class="col-md-4 mb-3 mb-md-0 text-center text-md-start">
+                <button class="btn btn-danger w-100 w-md-auto" onclick="vaciarCarrito()">
+                    🗑️ Vaciar carrito
+                </button>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0 text-center">
+                <h4 class="mb-0 fw-bold">
+                    Total: $<span id="total">0</span>
+                </h4>
+            </div>
+            <div class="col-md-4 text-center text-md-end">
+                <button class="btn btn-success w-100 w-md-auto" onclick="hacerPedido()">
+                    ✅ Confirmar pedido
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function cargarCarrito() {
+        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+        console.log(carrito);
+        const contenedor = document.getElementById("carrito-container");
+        const totalSpan = document.getElementById("total");
+
+        if (carrito.length === 0) {
+            contenedor.innerHTML = "<p>No hay productos en el carrito.</p>";
+            totalSpan.textContent = "0";
+            return;
+        }
+
+        let html = "";
+            // Contadores
+        let contadorHamburguesas = 0;
+        let contadorBebidas = 0;
+        let total = 0;
+
+        carrito.forEach((h, index) => {
+            const cantidad =  1;
+            total += h.precio;
+
+
+        const tipoTexto = h.tipo === "hamburguesa" ? "🍔 Hamburguesa" :
+                          h.tipo === "bebida" ? "🥤 Bebida" : "🧾 Otro";
+
+        if (h.tipo === "hamburguesa") {
+                contadorHamburguesas += cantidad;
+        } else if (h.tipo === "bebida") {
+                contadorBebidas += cantidad;
+        }
+
+
+        // Si es hamburguesa, armamos la lista de ingredientes
+        let ingredientesHtml = "";
+        if (h.tipo === "hamburguesa" && Array.isArray(h.ingredientes)) {
+            ingredientesHtml = `
+                <p class="card-text"><strong>Ingredientes:</strong></p>
+                <ul>
+                    ${h.ingredientes.map(i => `<li>${i}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        html += `
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title mb-1">${tipoTexto}</h5>
+                            <h6 class="card-subtitle text-muted mb-2">${h.nombre}</h6>
+                            <p class="card-text mb-1">Precio unitario: $${h.precio.toFixed(2)}</p>
+                            ${ingredientesHtml}
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm ms-3" onclick="eliminarDelCarrito(${index})">🗑️ Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+        contenedor.innerHTML = html;
+        totalSpan.textContent = total.toFixed(2);
+    }
+
+    function vaciarCarrito() {
+        if (confirm("¿Seguro que querés vaciar el carrito?")) {
+            localStorage.removeItem("carrito");
+            cargarCarrito();
+        }
+    }
+
+    function eliminarDelCarrito(index) {
+        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+        carrito.splice(index, 1);
+        localStorage.setItem("carrito", JSON.stringify(carrito));
+        cargarCarrito();
+    }
+
+
+     function hacerPedido() {
+        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+        if (carrito.length === 0) {
+            alert("El carrito está vacío. Agregá productos para hacer un pedido!.");
+        } else {
+            window.location.href = "/hacerpedido";
+        }
+    }
+
+    // Cargar al iniciar
+    cargarCarrito();
+</script>

@@ -1,0 +1,65 @@
+﻿@model IEnumerable<app.Models.Hamburguesa>
+
+
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: scale(1.02);
+    }
+
+    .transition {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<section id="hamburguesa" class="container my-5">
+    <h2 class="text-center fw-bold mb-4">Hamburguesas</h2>
+
+    @foreach (var hamburguesa in Model)
+    {
+        <div class="card shadow mb-4 border border-secondary hover-shadow transition">
+            <div class="card-body">
+                <a asp-action="verhamburguesa" asp-route-id="@hamburguesa.Id" class="text-decoration-none text-dark">
+                <div class="row align-items-center">
+                    <!-- Columna: Imagen -->
+                    <div class="col-4">
+                        
+                            @if (hamburguesa.Imagen != null)
+                            {
+                                <img src="data:@hamburguesa.ImagenMimeType;base64,@Convert.ToBase64String(hamburguesa.Imagen)"
+                                     alt="@hamburguesa.Nombre"
+                                     class="img-fluid rounded"
+                                     style="max-height: 120px; width: 100%; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <img src="~/images/hero.png"
+                                     alt="@hamburguesa.Nombre"
+                                     class="img-fluid rounded"
+                                     style="max-height: 120px; width: 100%; object-fit: cover;" />
+                            }
+                        
+                    </div>
+
+                    <!-- Columna: Nombre -->
+                    <div class="col-4 text-center">
+                        <h5 class="mb-0">@hamburguesa.Nombre</h5>
+                    </div>
+
+                    <!-- Columna: Precio -->
+                    <div class="col-3 text-end">
+                        <p class="fs-5 fw-semibold mb-0">$@hamburguesa.Precio</p>
+                    </div>
+                </div>
+                </a>
+            </div>
+
+
+           
+        </div>
+    }
+
+
+
+</section>

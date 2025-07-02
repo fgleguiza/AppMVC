@@ -3,7 +3,61 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <h4>Bienvenido, @ViewBag.Nombre!</h4>
-</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: scale(1.02);
+    }
+
+    .transition {
+        transition: all 0.3s ease;
+    }
+</style>
+
+
+<section class="container my-5">
+
+    <div class="d-flex justify-content-center my-4">
+        <div class="card shadow border-0" style="max-width: 500px;">
+            <div class="card-body text-center">
+                <h4 class="card-title mb-2">🎉 ¡Hola @ViewBag.Nombre!</h4>
+                <p class="card-text text-muted">Bon appétit!</p>
+            </div>
+        </div>
+    </div>
+
+        <div class="row justify-content-center">
+            <!-- Panel Hamburguesas -->
+            <div class="col-md-5 mb-4">
+                <a asp-controller="Hamburguesas" asp-action="Index" class="text-decoration-none">
+                    <div class="card shadow h-100 border-0 hover-shadow transition">
+                        <img src="@Url.Content("~/Images/hero.png")" class="card-img-top" alt="Hamburguesas">
+                        <div class="card-body text-center">
+                            <h4 class="card-title fw-bold text-dark mb-2">🍔 Hamburguesas</h4>
+                            <p class="card-text text-secondary fs-6">
+                                Descubrí nuestras hamburguesas artesanales con ingredientes frescos y sabor irresistible.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Panel Bebidas -->
+            <div class="col-md-5 mb-4">
+                <a asp-controller="Bebidas" asp-action="Index" class="text-decoration-none">
+                    <div class="card shadow h-100 border-0 hover-shadow transition">
+                        <img src="@Url.Content("~/Images/drinks.png")" class="card-img-top" alt="Bebidas">
+                        <div class="card-body text-center">
+                            <h4 class="card-title fw-bold text-dark mb-2">🥤 Bebidas</h4>
+                            <p class="card-text text-secondary fs-6">
+                                Acompañá tu comida con nuestras bebidas exclusivas.
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>

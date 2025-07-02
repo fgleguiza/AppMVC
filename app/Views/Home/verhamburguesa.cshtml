@@ -1,0 +1,65 @@
+﻿@model app.Models.Hamburguesa
+
+<section class="container my-5">
+    <div class="card shadow border border-secondary">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    @if (Model.Imagen != null)
+                    {
+                        <img src="data:@Model.ImagenMimeType;base64,@Convert.ToBase64String(Model.Imagen)"
+                             alt="@Model.Nombre"
+                             class="img-fluid rounded"
+                             style="max-height: 300px; width: 100%; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <img src="~/images/hero.png"
+                             alt="@Model.Nombre"
+                             class="img-fluid rounded"
+                             style="max-height: 300px; width: 100%; object-fit: cover;" />
+                    }
+                </div>
+
+                <div class="col-md-7">
+                    <h2>@Model.Nombre</h2>
+                    <p class="fs-4 fw-semibold">Precio: $@Model.Precio</p>
+
+                    <h4 class="mt-4">Ingredientes:</h4>
+                    <ul class="list-group">
+                        @foreach (var hi in Model.HamburguesaIngredientes)
+                        {
+                            <li class="list-group-item text-center">@hi.Ingrediente.Nombre</li>
+                        }
+                    </ul>
+                    <button class="btn btn-success w-100 mt-4" onclick="agregarAlCarrito()">
+                        🛒 Agregar
+                    </button>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+
+@using System.Text.Json
+
+<script>
+    function agregarAlCarrito() {
+      
+        const hamburguesa = @Html.Raw(JsonSerializer.Serialize(new {
+            tipo = "hamburguesa",
+            id = Model.Id,
+            nombre = Model.Nombre,
+            precio = Model.Precio,
+            ingredientes = Model.HamburguesaIngredientes.Select(hi => hi.Ingrediente.Nombre)
+        }));
+
+        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+        carrito.push(hamburguesa);
+        localStorage.setItem("carrito", JSON.stringify(carrito));
+        alert("Hamburguesa agregada al carrito 🍔");
+    }
+</script>
+

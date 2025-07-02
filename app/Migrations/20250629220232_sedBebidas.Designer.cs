@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using app.Context;
 
@@ -11,9 +12,11 @@ using app.Context;
 namespace app.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250629220232_sedBebidas")]
+    partial class sedBebidas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,79 +261,6 @@ namespace app.Migrations
                         });
                 });
 
-            modelBuilder.Entity("app.Models.ItemPedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PedidoId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TipoProducto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PedidoId");
-
-                    b.ToTable("ItemPedido");
-                });
-
-            modelBuilder.Entity("app.Models.Pedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DireccionEntrega")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Estado")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaPedido")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FormaPago")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumeroPedido")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Observaciones")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TelefonoContacto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Pedido");
-                });
-
             modelBuilder.Entity("app.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -405,28 +335,6 @@ namespace app.Migrations
                     b.Navigation("Ingrediente");
                 });
 
-            modelBuilder.Entity("app.Models.ItemPedido", b =>
-                {
-                    b.HasOne("app.Models.Pedido", "Pedido")
-                        .WithMany("Items")
-                        .HasForeignKey("PedidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pedido");
-                });
-
-            modelBuilder.Entity("app.Models.Pedido", b =>
-                {
-                    b.HasOne("app.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("app.Models.Hamburguesa", b =>
                 {
                     b.Navigation("HamburguesaIngredientes");
@@ -435,11 +343,6 @@ namespace app.Migrations
             modelBuilder.Entity("app.Models.Ingrediente", b =>
                 {
                     b.Navigation("HamburguesaIngredientes");
-                });
-
-            modelBuilder.Entity("app.Models.Pedido", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("app.Models.Usuario", b =>
