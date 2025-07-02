@@ -1,12 +1,7 @@
 ﻿using app.Context;
 using app.Models;
 using app.Service;
-using app.ViewModels;
-using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using System.Diagnostics;
-
 
 
 namespace app.Controllers
@@ -37,8 +32,8 @@ namespace app.Controllers
         public async Task<IActionResult> sendEmail()
         {
             await _emailService.SendEmailAsync(
-                "aldanabp@outlook.com",
-                "Hola soy la aplicacion de facu que esta haciendo para la facu jeje , el dice que te ama mucho , que no lo olvides nunca!!",
+                "fgleguiza2001@gmail.com",
+                "holaaaa!",
                 "<h1>¡Correo enviado correctamente!</h1>"
             );
 
@@ -87,13 +82,11 @@ namespace app.Controllers
         //    return RedirectToAction("CambiarContrasena", new { email = model.Email });
 
 
-
-
-
-
         //    _logger.LogInformation("Formulario de codigo de verificacion contrasenia.");
         //    return ViewAuth("SendVerificationCode");
         //}
+
+
 
         [HttpPost]
         public async Task<IActionResult> GetVerificationCode(Usuario usuario)
@@ -136,6 +129,7 @@ namespace app.Controllers
             return RedirectToAction("Login");
         }
 
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -143,11 +137,11 @@ namespace app.Controllers
             return ViewAuth("Register");
         }
 
-
         private bool EmailYaRegistrado(string email)
         {
             return _context.Usuario.Any(u => u.Email == email);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Register(
@@ -167,8 +161,6 @@ namespace app.Controllers
                 TempData["CuentaExistente"] = "Ese correo ya está registrado";
                 return View(usuario);
             }
-
-
 
             var validarDatosEntrantes = ModelState.IsValid;
 
@@ -193,9 +185,6 @@ namespace app.Controllers
         }
 
         
-
-
-
         [HttpPost]
         public IActionResult Login(Usuario usuario)
         {
@@ -211,17 +200,20 @@ namespace app.Controllers
                 u => u.Email == usuario.Email && u.Contrasena == usuario.Contrasena
              );
 
-
             if (usuarioBuscado == null)
             {
                 TempData["CuentaExistente"] = "Contrasenia Incorrecta!";
                 return ViewAuth("Login", usuario);
             }
 
+            _logger.LogInformation("Usuario logeado correctamente : {Email}", usuario.Email);
             // 🔐 Guardar en sesión
             HttpContext.Session.SetInt32("id", usuarioBuscado.Id);
             HttpContext.Session.SetString("nombreCompleto", usuarioBuscado.NombreCompleto);
             HttpContext.Session.SetString("email", usuarioBuscado.Email);
+
+            _logger.LogInformation("Usuario en seesion correctamente : {Email}", usuario.Email);
+
             return RedirectToAction("Index", "Home");
         }
     }

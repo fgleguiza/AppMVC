@@ -1,0 +1,73 @@
+﻿@model List<app.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Mis Pedidos";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">🛒 Mis Pedidos</h2>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info text-center">
+            Aún no realizaste ningún pedido.
+        </div>
+    }
+    else
+    {
+        foreach (var pedido in Model)
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Pedido N°:</strong> @pedido.NumeroPedido
+                    </div>
+                    
+                </div>
+                <div class="card-body">
+                    <p><strong>Fecha:</strong> @pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p><strong>Forma de pago:</strong> @pedido.FormaPago</p>
+                    <p><strong>Dirección de entrega:</strong> @pedido.DireccionEntrega</p>
+                    <hr />
+
+                    <h5>Productos:</h5>
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-center">Cantidad</th>
+                                <th class="text-end">Precio unitario</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in pedido.Items)
+                            {
+                                var nombreProducto = "";
+                                if (item.TipoProducto == "Hamburguesa")
+                                {
+                                    nombreProducto = "Hamburguesa";
+                                }
+                                else if (item.TipoProducto == "Bebida")
+                                {
+                                    nombreProducto =  "Bebida";
+                                }
+
+                                <tr>
+                                    <td>@nombreProducto</td>
+                                    <td class="text-center">@item.Cantidad</td>
+                                    <td class="text-end">$@item.PrecioUnitario.ToString("N2")</td>
+                                    <td class="text-end">$@(item.Subtotal.ToString("N2"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <p class="text-end fw-bold fs-5">
+                        Total: $
+                        @pedido.Items.Sum(i => i.Subtotal).ToString("N2")
+                    </p>
+                </div>
+            </div>
+        }
+    }
+</div>
