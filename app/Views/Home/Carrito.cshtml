@@ -105,6 +105,7 @@
         if (confirm("¿Seguro que querés vaciar el carrito?")) {
             localStorage.removeItem("carrito");
             cargarCarrito();
+            actualizarContadorCarrito();
         }
     }
 
@@ -113,6 +114,7 @@
         carrito.splice(index, 1);
         localStorage.setItem("carrito", JSON.stringify(carrito));
         cargarCarrito();
+        actualizarContadorCarrito();
     }
 
 
