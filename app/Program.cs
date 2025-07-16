@@ -118,6 +118,12 @@ namespace app
                 defaults: new { controller = "Pedido", action = "MisPedidos" });
 
 
+            app.MapControllerRoute(
+               name: "admin",
+               pattern: "admin",
+               defaults: new { controller = "Admin", action = "Admin" });
+
+
 
 
             // ruta default
