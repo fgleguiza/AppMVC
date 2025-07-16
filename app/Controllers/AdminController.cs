@@ -42,9 +42,31 @@ namespace app.Controllers
             return ViewAdmin("Admin");
         }
 
+        [HttpGet]
+        public IActionResult ListaPedidos()
+        {
+            var pedidos = _context.Pedido
+                .Include(p => p.Usuario)
+                .OrderByDescending(p => p.FechaPedido)
+                .ToList();
 
-       
+            return ViewAdmin("ListaPedidos", pedidos);
+        }
 
+        [HttpPost]
+        public IActionResult ActualizarEstado([FromBody] EstadoViewModel data)
+        {
+            var pedido = _context.Pedido.FirstOrDefault(p => p.Id == data.Id);
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+
+            pedido.Estado = data.Estado;
+            _context.SaveChanges();
+
+            return Ok();
+        }
 
 
     }

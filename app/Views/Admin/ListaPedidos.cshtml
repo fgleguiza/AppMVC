@@ -1,0 +1,41 @@
+﻿@model List<app.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Listado de Pedidos";
+}
+
+<div class="container-fluid mt-5">
+    <h2 class="mb-4">📋 Todos los Pedidos</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th style="min-width: 60px;">#</th>
+                    <th style="min-width: 130px;">Número</th>
+                    <th style="min-width: 160px;">Fecha</th>
+                    <th style="min-width: 180px;">Usuario</th>
+                    <th style="min-width: 150px;">Forma de Pago</th>
+                    <th style="min-width: 200px;">Dirección</th>
+                    <th style="min-width: 140px;">Teléfono</th>
+                    <th style="min-width: 220px;">Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pedido in Model)
+                {
+                    <tr>
+                        <td>@pedido.Id</td>
+                        <td>@pedido.NumeroPedido</td>
+                        <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@pedido.Usuario?.NombreCompleto</td>
+                        <td>@pedido.FormaPago</td>
+                        <td>@pedido.DireccionEntrega</td>
+                        <td>@pedido.TelefonoContacto </td>
+                        <td>@pedido.Observaciones </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

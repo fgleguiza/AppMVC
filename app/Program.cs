@@ -123,6 +123,16 @@ namespace app
                pattern: "admin",
                defaults: new { controller = "Admin", action = "Admin" });
 
+            app.MapControllerRoute(
+               name: "adminpedidos",
+               pattern: "adminpedidos",
+               defaults: new { controller = "Admin", action = "ListaPedidos" });
+
+            app.MapControllerRoute(
+               name: "actualizarEstado",
+               pattern: "admin/actualizarestado",
+               defaults: new { controller = "Admin", action = "ActualizarEstado" });
+
 
 
 
